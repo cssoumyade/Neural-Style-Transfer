@@ -32,6 +32,7 @@ st.sidebar.text("")
 st.sidebar.text("")
 
 imp_type = st.sidebar.radio("Choose implementation type : ", ['Custom','TF-HUB'])
+st.sidebar.text("tensorflow hub's implementation is way more faster than custom")
 st.sidebar.text("")
 st.sidebar.text("")
 
