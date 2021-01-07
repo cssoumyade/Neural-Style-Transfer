@@ -1,4 +1,5 @@
 import tensorflow as tf
+import tensorflow_hub as hub
 import numpy as np
 import io
 from PIL import Image, ImageOps
@@ -140,6 +141,10 @@ def train_step(image, targets, weights=(1e4, 1e-2)):
     grad = tape.gradient(loss, image)
     optimizer.apply_gradients([(grad, image)])
     image.assign(clip_0_1(image))
+
+    
+    
+hub_module = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
 
 
     

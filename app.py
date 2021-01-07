@@ -4,6 +4,8 @@ from app_helper import *
 
 st.set_page_config(layout='wide')
 
+
+
 page_bg_img = '''
 <style>
 body {
@@ -21,10 +23,23 @@ st.markdown(page_bg_img, unsafe_allow_html=True)
 st.title("Neural Style Transfer")
 st.text("Streamlit app based on A Neural Algorithm of Artistic Style (Leon A. Gatys et. al 2015) ")
 
-st.sidebar.header("Options")
+
+
+st.sidebar.title("Options")
+
+
 st.sidebar.text("")
 st.sidebar.text("")
-ep = st.sidebar.slider("Number of Epochs ", 0, 20) 
+
+imp_type = st.sidebar.radio("Choose implementation type : ", ['Custom','TF-HUB'])
+st.sidebar.text("")
+st.sidebar.text("")
+
+if imp_type=='Custom':
+    ep = st.sidebar.slider("Number of Epochs ", 1, 20)
+    spe = st.sidebar.slider("Steps per Epoch", 10,30)
+    sw = st.sidebar.slider("Style weight", 1e-4, 1e1)
+    cw = st.sidebar.slider("Content weight", 1e2, 1e5)
 
 st.text("")
 st.text("")
@@ -56,7 +71,9 @@ if style_file is not None:
 
 
 _, col2, _ = st.beta_columns(3)
-if (content_file is not None) and (style_file is not None):
+
+
+if (content_file is not None) and (style_file is not None) and (imp_type=='Custom'):
     image = tf.Variable(load_img(image_c))
     
     content_targets = extractor(load_img(image_c))['content']
@@ -67,10 +84,10 @@ if (content_file is not None) and (style_file is not None):
     col2.header("Resulted Image")
     result_image_ph = col2.empty()
 
-    epochs = 5
-    steps_per_epoch = 10
+    epochs = ep
+    steps_per_epoch = spe
     
-    weights = (1e3, 1e-1)
+    weights = (cw, sw)
     
     progress_bar = col2.progress(0)
     status_text = col2.empty()
@@ -89,6 +106,19 @@ if (content_file is not None) and (style_file is not None):
     result_image_ph.image(tensor_to_image(image), height=300, width=500)
     
 
+if (content_file is not None) and (style_file is not None) and (imp_type=='TF-HUB'):
+    
+    col2.text("")
+    col2.text("")
+    col2.header("Resulted Image")
+    result_image_ph = col2.empty()
+    outputs = hub_module(load_img(image_c), load_img(image_s))
+    stylized_image = outputs[0]
+    
+    result_image_ph.image(tensor_to_image(stylized_image), height=300, width=500)
+    
+    
+    
 
 
 
